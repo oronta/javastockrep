@@ -10,8 +10,11 @@ public class Stock {
 	
 	private String symbol; 
 	private float ask, bid;
-		private Date date;
-	
+	private Date date;
+	private int recommendation;
+	private int stockQuantity;
+	public static final int BUY=0, SELL=1, REMOVE = 2, HOLD = 3;
+			
 	public Stock(String Symbol, float ask, float bid, Date date){ // CONST THAT WILL MAKE ACCESSING STOCK IN AN EASIER WAY
 		this.symbol = Symbol;
 		this.ask = ask;
