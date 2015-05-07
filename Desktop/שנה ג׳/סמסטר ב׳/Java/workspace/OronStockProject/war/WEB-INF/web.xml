@@ -4,32 +4,6 @@ xmlns="http://java.sun.com/xml/ns/javaee"
 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-	<servlet>
-		<servlet-name>Ex2Math</servlet-name>
-		<servlet-class>com.oroninc.stockproject.OronStockProjectServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Ex2Math</servlet-name>
-		<url-pattern>/oronstockprojectservlet</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>Ex3Adv</servlet-name>
-		<servlet-class>com.oroninc.stockproject.Ex3Adv</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Ex3Adv</servlet-name>
-		<url-pattern>/ex3adv</url-pattern>
-	</servlet-mapping>
-	
- 	<servlet>
-		<servlet-name>StockDetailsServlet</servlet-name>
-		<servlet-class>com.oroninc.stockproject.StockDetailsServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>StockDetailsServlet</servlet-name>
-		<url-pattern>/stockdetailsservlet</url-pattern>
-	</servlet-mapping> 
 
  	<servlet>
 		<servlet-name>PortfolioServlet</servlet-name>

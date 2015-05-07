@@ -1,18 +1,38 @@
+/* Class for portfolio objects */
+
 package com.oroninc.stockproject.model;
 
 import com.google.api.server.spi.Constant;
-import com.oroninc.stockproject.Stock;
 
+import java.util.Date;
 public class Portfolio {
 
 	private String title;
 	public static final int  MAX_SIZE_PORTFOLIO=5;
-	Stock stocks[];
-	int portfolioSize=0;	
-		
+	private Stock[] stocks = new Stock[MAX_SIZE_PORTFOLIO];
+	int portfolioSize;	
+
 	
-	public Portfolio(){
-		stocks = new Stock[MAX_SIZE_PORTFOLIO];
+	
+	public Portfolio(String title,Stock[] stocks, int portfolioSize){ /* const */
+		this.title = title;
+		this.stocks = stocks;
+		this.portfolioSize = portfolioSize;
+	}
+	
+	public Portfolio(Portfolio portfolioCpy){ /* copy constructor */
+		this.title = portfolioCpy.getTitle();
+		
+		for(int i=0;i<=portfolioCpy.getPortfolioSize();i++){
+			String symbol = portfolioCpy.stocks[i].getSymbol();
+			float ask = portfolioCpy.stocks[i].getAsk();
+			float bid = portfolioCpy.stocks[i].getBid();
+			Date date = portfolioCpy.stocks[i].getDate();
+			Stock cpystock = new Stock(symbol, ask, bid, date);
+			this.stocks[i] = cpystock;
+		}
+		this.portfolioSize=portfolioCpy.getPortfolioSize();
+		
 	}
 	
 	/* Adding a new stock to the Portflio */
@@ -25,7 +45,18 @@ public class Portfolio {
 			else{
 				System.out.println("The portfolio is full");
 			}
-		}		
+		}
+	
+	/* Removing a stock from portfolio */
+	public void rmvStock(String delStock){
+
+			for(int i=0; i<=portfolioSize; i++){
+				if(stocks[i].getSymbol().equals(delStock)){
+					stocks[i]=null;
+				}
+			}
+		}
+				
 
 	
 	/* return the stocks array */
@@ -54,7 +85,11 @@ public class Portfolio {
 	public static int getMaxSizePortfolio() {
 		return MAX_SIZE_PORTFOLIO;
 	}
-
+	
+	public int getPortfolioSize(){
+		return portfolioSize;
+	}
+	
 	public void setStocks(Stock[] stocks) {
 		this.stocks = stocks;
 	}

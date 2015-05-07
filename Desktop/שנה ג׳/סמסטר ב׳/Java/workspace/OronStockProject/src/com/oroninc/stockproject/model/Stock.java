@@ -1,6 +1,6 @@
 
-
-package com.oroninc.stockproject;
+// Class for Stock objects
+package com.oroninc.stockproject.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,11 +15,18 @@ public class Stock {
 	private int stockQuantity;
 	public static final int BUY=0, SELL=1, REMOVE = 2, HOLD = 3;
 			
+	
 	public Stock(String Symbol, float ask, float bid, Date date){ // CONST THAT WILL MAKE ACCESSING STOCK IN AN EASIER WAY
 		this.symbol = Symbol;
 		this.ask = ask;
 		this.bid = bid;
 		this.date = date;
+	}
+	
+	/* Copy const*/
+	public Stock(Stock stock){ 
+		this(new String(stock.getSymbol()), stock.getAsk(),stock.getBid(), new Date(stock.getDate().getTime())); // לעשות ככהההההה
+		
 	}
 	
 	// Getter's & Setter's
@@ -48,7 +55,7 @@ public class Stock {
 		this.date = date;
 	}	
 	
-	public String getHtmlDescription() { // לשנות כמו ששניתי בסרבלט
+	public String getHtmlDescription() { // Html output of a stock's details
 		
 		DateFormat df= new SimpleDateFormat("MM/dd/yyyy");
 		String dateStrng = df.format(getDate());
