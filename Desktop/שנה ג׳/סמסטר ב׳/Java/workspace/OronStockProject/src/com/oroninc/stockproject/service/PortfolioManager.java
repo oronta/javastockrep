@@ -16,21 +16,34 @@ public class PortfolioManager {
 							
 			
 			Calendar cal = Calendar.getInstance();
-			cal.set(2014, 15, 11, 0, 0, 0); // Change to the assign date
+			cal.set(2014, 15, 12, 0, 0, 0); // Change to the assign date
 			Date date1= cal.getTime();
 			Date date2= cal.getTime();
 			Date date3= cal.getTime();
 			
-			String portflioTitle = "Portfolio #1";
+/*			String portflioTitle = "Portfolio #1";
 			Stock PIH = new Stock("PIH", 13.1f, 12.4f, date1 );
 			Stock AAL = new Stock("AAL", 5.78f, 5.5f, date2);			
 			Stock CAAS = new Stock("CAAS", 32.2f, 31.5f, date3);
 			Stock[] stkArr = {PIH,AAL,CAAS};
-			int numOfStcks = 3;
+			int numOfStcks = 3; */
 			
-			Portfolio portfolio = new Portfolio(portflioTitle,stkArr,numOfStcks);
+			/* Portfolio portfolio = new Portfolio(portflioTitle,stkArr,numOfStcks); */
+			Portfolio myPortfolio = new Portfolio();
+			myPortfolio.setTitle("Exercise 7 portfolio");
+			myPortfolio.updateBalance(10000);
+			Stock PIH = new Stock("PIH", 10.0f, 8.5f, date1 );
+			Stock AAL = new Stock("AAL",30.0f, 25.5f, date2);			
+			Stock CAAS = new Stock("CAAS", 20.0f, 15.5f, date3);
+			myPortfolio.buyStock(PIH, 20);			
+			myPortfolio.buyStock(AAL, 30);
+			myPortfolio.buyStock(CAAS, 40);
+			myPortfolio.sellStock("AAL", 30);
+			myPortfolio.removeStock("CAAS");			
 			
-			return portfolio;
+			return myPortfolio;
+			
+
 		}
 	
 	
