@@ -6,9 +6,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.algo.model.StockInterface;
+
 import com.oroninc.stockproject.model.Portfolio.ALGO_RECOMMENDATION;
 
-public class Stock {
+public class Stock implements StockInterface {
 	
 	private String symbol; 
 	private float ask, bid;
@@ -16,7 +18,14 @@ public class Stock {
 	private ALGO_RECOMMENDATION recommendation;
 	private int stockQuantity;
 			
-	
+	public Stock() {
+		
+		this.symbol = null;
+		this.ask = 0;
+		this.bid = 0;
+		this.date = null;
+		this.stockQuantity = 0;
+	}
 	public Stock(String Symbol, float ask, float bid, Date date){ // CONST THAT WILL MAKE ACCESSING STOCK IN AN EASIER WAY
 		this.symbol = Symbol;
 		this.ask = ask;
@@ -52,8 +61,11 @@ public class Stock {
 	public Date getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate(Date time) {
+		this.date = time;
+	}
+	public void setDate(long time) {
+		this.date = new Date(time);
 	}
 	
 	public int getstockQuantity () {
