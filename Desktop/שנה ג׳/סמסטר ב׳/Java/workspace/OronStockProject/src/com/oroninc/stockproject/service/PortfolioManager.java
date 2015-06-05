@@ -22,7 +22,7 @@ import org.algo.service.PortfolioManagerInterface;
 import org.algo.service.ServiceManager;
 
 import com.oroninc.stockproject.model.*;
-
+import com.oroninc.stockproject.model.Stock.ALGO_RECOMMENDATION;
 
 public class PortfolioManager implements PortfolioManagerInterface {
 
@@ -217,8 +217,10 @@ public class PortfolioManager implements PortfolioManagerInterface {
 			newStock.setBid(stockDto.getBid());
 			newStock.setDate(stockDto.getDate().getTime());
 			newStock.setstockQuantity(stockDto.getQuantity());
-			if(stockDto.getRecommendation() != null) newStock.setRecommendation(Portfolio.ALGO_RECOMMENDATION.valueOf(stockDto.getRecommendation()));
-
+			if(stockDto.getRecommendation() != null) newStock.setRecommendation(com.oroninc.stockproject.model.Stock.ALGO_RECOMMENDATION.valueOf(stockDto.getRecommendation()));
+			{
+				newStock.setRecommendation(ALGO_RECOMMENDATION.valueOf("HOLD"));
+			}
 			return newStock;
 		}
 

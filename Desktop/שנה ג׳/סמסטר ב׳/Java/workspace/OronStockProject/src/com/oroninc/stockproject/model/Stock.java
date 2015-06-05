@@ -11,13 +11,19 @@ import org.algo.model.StockInterface;
 import com.oroninc.stockproject.model.Portfolio.ALGO_RECOMMENDATION;
 
 public class Stock implements StockInterface {
+
+	public enum ALGO_RECOMMENDATION {
+		BUY, SELL, REMOVE, HOLD
+	}	
 	
+	private ALGO_RECOMMENDATION recommendation;
 	private String symbol; 
 	private float ask, bid;
 	private Date date;
-	private ALGO_RECOMMENDATION recommendation;
+	
 	private int stockQuantity;
-			
+	
+	
 	public Stock() {
 		
 		this.symbol = null;
