@@ -3,6 +3,10 @@
 package com.oroninc.stockproject.model;
 
 import com.google.api.server.spi.Constant;
+import com.oroninc.stockproject.exception.BalanceException;
+import com.oroninc.stockproject.exception.PortfolioFullException;
+import com.oroninc.stockproject.exception.StockAlreadyExistsException;
+import com.oroninc.stockproject.exception.StockNotExistException;
 
 import java.util.Date;
 
@@ -93,81 +97,88 @@ public class Portfolio implements PortfolioInterface{
 	
 		
 	/* Adding a new stock to the Portflio */
-	public void addStock(Stock stock){			
+	public void addStock(Stock stock) throws PortfolioFullException, StockAlreadyExistsException, StockNotExistException{			
 		
-		int i=0;
-		
-		while(i<portfolioSize && !stocks[i].getSymbol().equals(stock.getSymbol())){
-			i++;
+		if (stock == null){
+			System.out.println("error");
 		}
-		if(i == portfolioSize && portfolioSize<MAX_SIZE_PORTFOLIO ){
-			this.stocks[this.portfolioSize]=(StockInterface) stock;
-			stock.setstockQuantity(0);
-			portfolioSize++;			
+		else if(this.portfolioSize == MAX_SIZE_PORTFOLIO){
+			throw new PortfolioFullException(MAX_SIZE_PORTFOLIO);
 		}
-		else if(portfolioSize==MAX_SIZE_PORTFOLIO){
-			System.out.println("Can't add new stock, a portfolio can only have " +MAX_SIZE_PORTFOLIO+ "stocks");
-		}
-		else{
-			return;
+
+		else 
+		{
+			throw new StockAlreadyExistsException("Already exists");
 		}
 	}
 
-
-	public boolean removeStock(String symbol){ // Removes a stock from the portfolio's stocks array
+	public void removeStock(String symbol)throws StockNotExistException { // Removes a stock from the portfolio's stocks array
 		
-		for(int i=0; i<portfolioSize; i++){
-			if(stocks[i].getSymbol().equals(symbol)){
-				sellStock(stocks[i].getSymbol(),1);
-				stocks[i]=stocks[portfolioSize-1];
-				stocks[portfolioSize-1]=null;
-				portfolioSize = portfolioSize-1;
-				System.out.println("The Stock has been removed");
-				return true;
-			}
+		if(symbol.equals(null)){
+			throw new StockNotExistException();
 		}
-		System.out.println("There's no such stock in the Portfolio");
-		return false;
-	}
-				
-	public boolean sellStock(String symbol, int quant){ // Sells a stock if authorized
-		
-		
-		for(int i=0; i<portfolioSize; i++){
-			
-			if(stocks[i].getSymbol().equals(symbol) && ((Stock) stocks[i]).getstockQuantity()>0 && ((Stock) stocks[i]).getstockQuantity()<=quant){
-				int newquant = ((Stock) stocks[i]).getstockQuantity()-quant; // calc new quantity
-				((Stock) stocks[i]).setstockQuantity(newquant);
-				float sum; // Amount that needs to be added to balance
-				sum = ((Stock) stocks[i]).getstockQuantity()*stocks[i].getBid();
-				updateBalance(sum);
-				System.out.println("The Stock named" +symbol+  "has been sold");
-				return true;
+			else{
+				int index= findStock(symbol);
+				if(index < this.portfolioSize){
+				if(((Stock) this.stocks[index]).getstockQuantity() != 0 ){
+				sellStock(symbol, -1);
+				this.stocks[index] = this.stocks[this.portfolioSize-1];
+				this.stocks[this.portfolioSize-1] = null;
+				this.portfolioSize--;
+				}
+				else{
+						this.stocks[index] = this.stocks[this.portfolioSize-1];
+						this.stocks[this.portfolioSize-1] = null;
+						this.portfolioSize--;
+				}
+				}
 			}
-			else if(stocks[i].getSymbol().equals(symbol) && ((Stock) stocks[i]).getstockQuantity()==0){
-				System.out.println("You do not have enough credit to sell" +quant+ "amount of stocks");
-				return false;
-			}
-			else if(stocks[i].getSymbol().equals(symbol) && quant==-1){
-				float saleSum;
-				saleSum = ((Stock) stocks[i]).getstockQuantity()*stocks[i].getBid();
-				updateBalance(saleSum);
-				((Stock) stocks[i]).setstockQuantity(0);
-				return true;
-			}
-		}
-		System.out.println("The Stock named" +symbol+  "has not been found in the portfolio");
-		return false;		
 	}
 	
-	public boolean buyStock(Stock stockToPurchase, int quant) // Buy a stock
+				
+	public void sellStock(String symbol, int quant)  throws StockNotExistException, PortfolioFullException{ // Sells a stock if authorized
+		
+		boolean Exists = false;
+		if (symbol == null || quant < -1) { 
+			throw new StockNotExistException("Invalid input");
+		}				
+		for (int i = 0; i < this.portfolioSize && Exists == false; i++) {
+			if (symbol.equals(stocks[i].getSymbol())) {
+				Exists = true;
+				if (((Stock) this.stocks[i]).getstockQuantity() - quant < 0) {
+					throw new PortfolioFullException(i);
+
+				} else if (quant == -1) {
+					this.balance += ((Stock) this.stocks[i]).getstockQuantity()
+							* this.stocks[i].getBid();
+					((Stock) this.stocks[i]).setstockQuantity(0);
+					System.out.println("All stocks of " + symbol
+							+ " were sold!");
+					}
+			}
+		}
+		if (Exists == false) {
+			throw new StockNotExistException(
+					"The stock you're trying to sell doesn't appear in portfolio");
+		}		
+	}
+			
+	
+	public void buyStock(Stock stockToPurchase, int quant) throws BalanceException, PortfolioFullException, StockAlreadyExistsException, StockNotExistException // Buy a stock
 	{
 		boolean stockIsInPortfolio = false;
 		boolean buySucceed = false;
 
-		for (int i=0; i < portfolioSize; i++) // check all of the portfolio
+		int i = 0;
+		if (stockToPurchase == null || quant < -1) {
+			throw new StockNotExistException("No null stock OR invalid quantity!");
+		}
+		
+		
+		
+		for (int i1=0; i1 < portfolioSize; i1++) // check all of the portfolio
 		{
-			if (stocks[i].getSymbol().equals(stockToPurchase.getSymbol())) // stock to purchase is already in the portfolio
+			if (stocks[i1].getSymbol().equals(stockToPurchase.getSymbol())) // stock to purchase is already in the portfolio
 			{
 				stockIsInPortfolio = true;
 				
@@ -176,7 +187,7 @@ public class Portfolio implements PortfolioInterface{
 					while (balance > stockToPurchase.getAsk())
 					{			
 						quant--;
-						((Stock) stocks[i]).setstockQuantity(((Stock) stocks[i]).getstockQuantity()+1);
+						((Stock) stocks[i1]).setstockQuantity(((Stock) stocks[i1]).getstockQuantity()+1);
 						this.balance = this.balance - stockToPurchase.getAsk();
 					}
 					buySucceed = true;
@@ -187,7 +198,7 @@ public class Portfolio implements PortfolioInterface{
 				}
 				else 
 				{
-					((Stock) stocks[i]).setstockQuantity(((Stock) stocks[i]).getstockQuantity()+quant);
+					((Stock) stocks[i1]).setstockQuantity(((Stock) stocks[i1]).getstockQuantity()+quant);
 					this.balance -= stockToPurchase.getAsk() * quant;	
 					buySucceed = true;
 				}
@@ -212,9 +223,12 @@ public class Portfolio implements PortfolioInterface{
 				buySucceed = false;	
 			}
 		}
-	return buySucceed;
+		else if (i == MAX_SIZE_PORTFOLIO) { 
+			throw new PortfolioFullException(i);
+		}
+
 	}
-	
+
 	
 	/* return the stocks array */
 	public StockInterface[] getStocks(){
@@ -233,29 +247,19 @@ public class Portfolio implements PortfolioInterface{
 			
 	}
 
-	public Stock findStock(String stockSymbol){
-		int index = 0;
-		if(stockSymbol.equals(null)){
-			System.out.print("There is no stock with this name");
+	public StockInterface findStock(String findSymbol){
+
+		int i = 0;
+		if (findSymbol == null) {
 			return null;
 		}
-		else if(this.portfolioSize == 0){
-			return null;
-		}
-		else{
-			for(index = 0; index < this.portfolioSize; index++){
-				if(this.stocks[index].getSymbol().equals(stockSymbol)){
-				break;
+			for(int i = 0; i< this.portfolioSize; i++){
+				if(findSymbol.equals(this.stocks[i].getSymbol())){
+					return this.stocks[i];
 				}
 			}
+			return null;
 		}
-		return (Stock) stocks[index];	
-	}	
-	
-	
-	
-	
-	
 	
 	public String getTitle() {
 		return title;

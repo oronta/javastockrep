@@ -21,6 +21,8 @@ import org.algo.service.MarketService;
 import org.algo.service.PortfolioManagerInterface;
 import org.algo.service.ServiceManager;
 
+import com.oroninc.stockproject.exception.PortfolioFullException;
+import com.oroninc.stockproject.exception.StockAlreadyExistsException;
 import com.oroninc.stockproject.model.*;
 import com.oroninc.stockproject.model.Stock.ALGO_RECOMMENDATION;
 
@@ -138,20 +140,25 @@ public class PortfolioManager implements PortfolioManagerInterface {
 		 * Add stock to portfolio 
 		 */
 		@Override
-		public void addStock(String symbol) {
+		public void addStock(String symbol) throws PortfolioException {
 			Portfolio portfolio = (Portfolio) getPortfolio();
 
 			try {
-				StockDto stockDto = ServiceManager.marketService().getStock(symbol);
-				
-				//get current symbol values from nasdaq.
-				Stock stock = fromDto(stockDto);
-				
-				//first thing, add it to portfolio.
-
-				portfolio.addStock(stock);   
-
-				//second thing, save the new stock to the database.
+					StockDto stockDto = ServiceManager.marketService().getStock(symbol);
+					Stock stock = fromDto(stockDto);
+ 
+			
+					try {
+							portfolio.addStock(stock);
+					}  catch (StockAlreadyExistsException e){
+						e.getMessage();
+						e.printStackTrace();
+						throw e;
+					}  catch (PortfolioFullException e) {
+						e.getMessage();
+						e.printStackTrace();
+						throw e;
+					}
 				datastoreService.saveStock(toDto(portfolio.findStock(symbol)));
 				
 				flush(portfolio);
